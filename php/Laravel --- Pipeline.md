@@ -11,9 +11,8 @@ callback(mixed $carry, mixed $item): mixed
 return function ($stack, $pipe) {
     return function ($passable) use ($stack, $pipe) {
         // ...
-        // return handle($passable, $stack) 
-        // 这里面返回还是一个 function
-        // 就是中间件中定义的 handle 方法
+        return handle($passable, $stack) // 伪代码
+        // 这里调用的就是中间件中定义的 handle 方法
         // handle($request, Closure $next)
         // $stack 保留的是上一次得到的 function($passable)
         // 所以中间件中 $next 就是这个 $stack，所以这么调用 $next($request)
