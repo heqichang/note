@@ -41,7 +41,7 @@ public function load(array $providers)
         $this->app->register($provider);
     }
 
-    // 加载延迟加载的 service
+    // 记录延迟加载的 service
     $this->app->addDeferredServices($manifest['deferred']);
 }
 ```
