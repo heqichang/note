@@ -1,4 +1,16 @@
-真实加载的地方被定义在 Illuminate\Foundation\Application  的 registerConfiguredProviders 方法里，时间则是在 Kernel 调用 bootstrap 的时候。
+在 Illuminate\Foundation\Http\Kernel.php 文件里可以看到启动顺序：
+
+```php 
+protected $bootstrappers = [
+    // ...
+    // 这里注册启动 provider 的地方
+    \Illuminate\Foundation\Bootstrap\RegisterProviders::class, // register
+    \Illuminate\Foundation\Bootstrap\BootProviders::class, // boot
+];
+```
+
+先深入注册代码，实际注册调用在 Illuminate\Foundation\Application 的 registerConfiguredProviders 方法里
+
 
 ```php
 public function registerConfiguredProviders()
@@ -38,6 +50,7 @@ public function load(array $providers)
     
     // 注册 service
     foreach ($manifest['eager'] as $provider) {
+        // 这里面会调用到 provider 的 register() 方法
         $this->app->register($provider);
     }
 
@@ -45,3 +58,13 @@ public function load(array $providers)
     $this->app->addDeferredServices($manifest['deferred']);
 }
 ```
+
+注册完 provider 之后，下一步就是 boot。刚启动时只会 boot 标记为 eager 的 provider。
+
+```php
+这里要注意的一点是 Console 启动也会调用 provider 的 register 和 boot 方法，
+所以最好不要在这两个方法里放入业务逻辑，因为 composer 执行的时候可能会报错，
+因为它会去执行业务发现那个命令，会经过一次 laravel 的应用启动过程。
+```
+
+
