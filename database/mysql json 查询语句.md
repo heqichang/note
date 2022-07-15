@@ -20,3 +20,9 @@ select * from hc_draft where json_contains(draft, json_object('name', 't3'))
  参考:
  https://www.cnblogs.com/inkyi/p/15745242.html
 
+
+### 过滤 json 数据中的 null 或者 []
+null 可以直接用 is null 查找出来，但是 []，不能用 = '[]' 查找出来，可以用下面语句实现
+```sql
+select * from hc_draft where json_extract(`draft`, '$[0]') is not null;
+```
